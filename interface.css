@@ -1,0 +1,76 @@
+body{
+  background-color: rgb(40, 40, 40);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#letterContainer{
+  width: 30%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  border: solid thick rgb(100, 100, 100);
+}
+
+.block{
+  color: black;
+  font-size: 50px;
+  text-align: center;
+  border: solid thin rgb(30, 30, 30);
+  background-color: rgb(140,140,140);
+  user-select: none;
+  aspect-ratio: 1/1;
+  align-content: center;
+}
+
+.block:hover{
+  font-size: 55px;
+  background-color: rgb(147,147,147);
+}
+
+.blockLocked{
+  font-size: 50px;
+  color: black;
+  text-align: center;
+  border: solid thin rgb(30, 30, 30);
+  background-color: rgb(170,170,170);
+  user-select: none;
+  aspect-ratio: 1/1;
+  align-content: center;
+}
+
+.blockSelected{
+  color: black;
+  font-size: 50px;
+  text-align: center;
+  border: solid thin rgb(30, 30, 30);
+  background-color: rgb(160,160,180);
+  user-select: none;
+  aspect-ratio: 1/1;
+  align-content: center;
+}
+
+.blockSelected:hover{
+  font-size: 55px;
+  background-color: rgb(167,167,187);
+}
+
+.blockHint{
+  color: black;
+  font-size: 50px;
+  text-align: center;
+  border: solid thin rgb(30, 30, 30);
+  background-color: rgb(160,180,160);
+  user-select: none;
+  aspect-ratio: 1/1;
+  align-content: center;
+}
+
+.blockHint:hover{
+  font-size: 55px;
+  background-color: rgb(167,187,167);
+}
