@@ -299,6 +299,7 @@ function bClick(row, col){
       highlight();
     }
     selected = [];
+    checkWin();
   }
 }
 
@@ -309,6 +310,49 @@ function unique(myArray) {
 function hint(){
   highlight();
   hint1 = 1;
+}
+
+function checkWin(){
+  let rows = ['','',''];
+  let cols = ['','',''];
+
+  let rWins = [0, 0, 0];
+  let cWins = [0, 0, 0];
+
+  rows[0] = gameBoard[1][0]+gameBoard[1][1]+gameBoard[1][2]+gameBoard[1][3]+gameBoard[1][4];
+  rows[1] = gameBoard[2][0]+gameBoard[2][1]+gameBoard[2][2]+gameBoard[2][3]+gameBoard[2][4];
+  rows[2] = gameBoard[3][0]+gameBoard[3][1]+gameBoard[3][2]+gameBoard[3][3]+gameBoard[3][4];
+
+  cols[0] = gameBoard[0][1]+gameBoard[1][1]+gameBoard[2][1]+gameBoard[3][1]+gameBoard[4][1];
+  cols[1] = gameBoard[0][2]+gameBoard[1][2]+gameBoard[2][2]+gameBoard[3][2]+gameBoard[4][2];
+  cols[2] = gameBoard[0][3]+gameBoard[1][3]+gameBoard[2][3]+gameBoard[3][3]+gameBoard[4][3];
+
+  for (var i = 0; i < 3; i++) {
+    for (var j in wordList) {
+      if(rows[i] == wordList[j]) {
+        rWins[i] = 1;
+        break;
+      }
+    }
+
+    for (var j in wordList) {
+      if(cols[i] == wordList[j]) {
+        cWins[i] = 1;
+        break;
+      }
+    }
+  }
+
+  if(rWins.reduce((a, b) => a + b, 0) > 1 && cWins.reduce((a, b) => a + b, 0) > 1){
+    win();
+  }
+}
+
+function win(){
+  document.getElementById("block00").className = "blockHint";
+  document.getElementById("block04").className = "blockHint";
+  document.getElementById("block40").className = "blockHint";
+  document.getElementById("block44").className = "blockHint";
 }
 
 //Test Functions
