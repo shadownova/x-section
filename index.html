@@ -1,41 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>X-Section</title>
+  <link rel="stylesheet" href="interface.css">
+</head>
+<body onload="start()">
+  <div id="app">
+    <header id="topbar" aria-label="X-Section header">
+      <div id="title">X-Section</div>
+      <div id="controls">
+        <button id="newBtn" class="btn" onclick="newGame()">New Game</button>
+        <button id="hintBtn" class="btn" onclick="hint()">💡</button>
+        <button id="helpBtn" class="btn" onclick="toggleHelp()">?</button>
+      </div>
+    </header>
 
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="interface.css"></link>
-    <title id = "tabTitle">X-Section</title>
-  </head>
-  <body onload = "start()">
-    <div id = "letterContainer">
-      <div id = "block00" class = "blockLocked"></div>
-      <div id = "block01" class = "blockLocked"></div>
-      <div id = "block02" class = "blockLocked"></div>
-      <div id = "block03" class = "blockLocked"></div>
-      <div id = "block04" class = "blockLocked"></div>
-      <div id = "block10" class = "blockLocked"></div>
-      <div id = "block11" class = "block" onclick = "bClick(1,1)"></div>
-      <div id = "block12" class = "block" onclick = "bClick(1,2)"></div>
-      <div id = "block13" class = "block" onclick = "bClick(1,3)"></div>
-      <div id = "block14" class = "blockLocked"></div>
-      <div id = "block20" class = "blockLocked"></div>
-      <div id = "block21" class = "block" onclick = "bClick(2,1)"></div>
-      <div id = "block22" class = "block" onclick = "bClick(2,2)"></div>
-      <div id = "block23" class = "block" onclick = "bClick(2,3)"></div>
-      <div id = "block24" class = "blockLocked"></div>
-      <div id = "block30" class = "blockLocked"></div>
-      <div id = "block31" class = "block" onclick = "bClick(3,1)"></div>
-      <div id = "block32" class = "block" onclick = "bClick(3,2)"></div>
-      <div id = "block33" class = "block" onclick = "bClick(3,3)"></div>
-      <div id = "block34" class = "blockLocked"></div>
-      <div id = "block40" class = "blockLocked"></div>
-      <div id = "block41" class = "blockLocked"></div>
-      <div id = "block42" class = "blockLocked"></div>
-      <div id = "block43" class = "blockLocked"></div>
-      <div id = "block44" class = "blockLocked"></div>
+    <main id="main">
+      <div id="boardShell" role="application" aria-label="X-Section board">
+        <div id="gameContainer">
+
+          <div id="letterContainer" aria-hidden="false">
+            <!-- 5x5 grid: block00 .. block44 -->
+            <!-- These keep the same ids as your original so JS works -->
+            <div id="block00" class="block Locked" aria-hidden="true"></div>
+            <div id="block01" class="block Locked" aria-hidden="true"></div>
+            <div id="block02" class="block Locked" aria-hidden="true"></div>
+            <div id="block03" class="block Locked" aria-hidden="true"></div>
+            <div id="block04" class="block Locked" aria-hidden="true"></div>
+
+            <div id="block10" class="block Locked" aria-hidden="true"></div>
+            <div id="block11" class="block Move" onclick="bClick(1,1)"></div>
+            <div id="block12" class="block Move" onclick="bClick(1,2)"></div>
+            <div id="block13" class="block Move" onclick="bClick(1,3)"></div>
+            <div id="block14" class="block Locked" aria-hidden="true"></div>
+
+            <div id="block20" class="block Locked" aria-hidden="true"></div>
+            <div id="block21" class="block Move" onclick="bClick(2,1)"></div>
+            <div id="block22" class="block Move" onclick="bClick(2,2)"></div>
+            <div id="block23" class="block Move" onclick="bClick(2,3)"></div>
+            <div id="block24" class="block Locked" aria-hidden="true"></div>
+
+            <div id="block30" class="block Locked" aria-hidden="true"></div>
+            <div id="block31" class="block Move" onclick="bClick(3,1)"></div>
+            <div id="block32" class="block Move" onclick="bClick(3,2)"></div>
+            <div id="block33" class="block Move" onclick="bClick(3,3)"></div>
+            <div id="block34" class="block Locked" aria-hidden="true"></div>
+
+            <div id="block40" class="block Locked" aria-hidden="true"></div>
+            <div id="block41" class="block Locked" aria-hidden="true"></div>
+            <div id="block42" class="block Locked" aria-hidden="true"></div>
+            <div id="block43" class="block Locked" aria-hidden="true"></div>
+            <div id="block44" class="block Locked" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div id="status">Swap letters in the middle 3×3 to form four 5-letter words.</div>
+      <div id="meta" aria-hidden="true">• Minimal • Light mode</div>
+    </footer>
+  </div>
+
+  <div id="helpModal" class="modal hidden" role="dialog" aria-labelledby="helpTitle" aria-modal="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="helpTitle">How to Play</h2>
+      <button class="closeBtn" onclick="toggleHelp()">×</button>
     </div>
-    <div id = "buttonBox">
-      <button onclick = "hint()">Hint</button>
+    <div class="modal-body">
+      <p><strong>X-Section</strong> is a word puzzle. You must form <strong>4 hidden 5-letter words</strong> in a 5×5 grid.</p>
+      <ul>
+        <li>The outer letters are locked in place.</li>
+        <li>Swap the inner 3×3 letters by clicking two tiles.</li>
+        <li>Your goal is to form real words in both rows and columns.</li>
+        <li>Click <strong>Hint</strong> to reveal clue points.</li>
+      </ul>
+      <p>Good luck!</p>
     </div>
-    <script type="text/javascript" src="main.js"></script>
-  </body>
+  </div>
+</div>
+
+  <script src="main.js"></script>
+</body>
 </html>
