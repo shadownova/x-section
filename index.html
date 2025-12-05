@@ -11,9 +11,15 @@
     <header id="topbar" aria-label="X-Section header">
       <div id="title">X-Section</div>
       <div id="controls">
+        <button id="dailyBtn" class="btn" onclick="startDailyPuzzle()">Daily Game</button>
         <button id="newBtn" class="btn" onclick="newGame()">New Game</button>
         <button id="hintBtn" class="btn" onclick="hint()">💡</button>
         <button id="helpBtn" class="btn" onclick="toggleHelp()">?</button>
+        <button id="themeToggleBtn" class="btn" onclick="toggleTheme()">🌓</button>
+      </div>
+      <div id="timerDisplay">
+        <span id="timerText">0:00</span>
+        <button id="startBtn" class="btn" onclick="onStartPressed()">Start</button>
       </div>
     </header>
 
@@ -60,7 +66,6 @@
 
     <footer id="footer">
       <div id="status">Swap letters in the middle 3×3 to form four 5-letter words.</div>
-      <div id="meta" aria-hidden="true">• Minimal • Light mode</div>
     </footer>
   </div>
 

@@ -1,27 +1,63 @@
-:root{
-  --bg: #fafafa;
+/* ============================
+   THEME VARIABLES
+   ============================ */
+:root {
+  /* Light mode background + text */
+  --bg: #f4f4f4;
   --panel: #ffffff;
-  --muted: #666666;
-  --accent: #3a86ff; /* default accent for selection */
-  --tile-border: #e6e6e6;
-  --locked-tile: #f0f0f0;
-  --text: #222;
-  --shadow: 0 6px 18px rgba(32,32,32,0.06);
+  --tile-bg: #ffffff;
+  --tile-border: #ccc;
+  --text: #111;
+  --text-light: #ffffff;
 
-  --color-word-0: #e76f51; /* red */
-  --color-word-1: #3a86ff; /* blue */
-  --color-word-2: #ffbe0b; /* yellow */
-  --color-word-3: #83c5be; /* green */
+  --shadow: 0 6px 18px rgba(32,32,32,0.06);
+  --muted: #666666;
+  --locked-tile: #f0f0f0;
+
+  /* Light mode accent colors */
+  --accent-blue:   #3a86ff;
+  --accent-green:  #83c5be;
+  --accent-red:    #e76f51;
+  --accent-yellow: #ffbe0b;
 }
 
-/* Global / page */
-*{box-sizing: border-box}
+/* DARK MODE OVERRIDES */
+body.dark-mode {
+  --bg: #1b1b1b;
+  --panel: #2a2a2a;
+  --tile-bg: #333333;
+  --tile-border: #555555;
+  --text: #e2e2e2;
+  --text-light: #ffffff;
+
+  --shadow: 0 6px 18px rgba(32,32,32,0.06);
+  --muted: #999;
+  --locked-tile: #3b3b3b;
+
+  /* Dark mode accent colors */
+  --accent-blue:   #66FFFF;
+  --accent-green:  #B266FF;
+  --accent-red:    #FF9933;
+  --accent-yellow: #FF66FF;
+}
+
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.25s ease,
+              color 0.25s ease,
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+/* Global layout */
+* { box-sizing: border-box; }
+
 html,body{
   height:100%;
   margin:0;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text);
-  background: linear-gradient(180deg, var(--bg), #f5f7f8);
+  background: var(--bg);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
@@ -42,28 +78,30 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  background: transparent;
 }
 #title{
   font-weight:700;
-  font-size: clamp(18px, 3.2vw, 28px);
+  font-size: clamp(20px, 3.2vw, 30px);
   letter-spacing: 0.6px;
 }
-#controls{ display:flex; gap:10px; align-items:center; }
+#controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
 
 .btn{
   background: var(--panel);
   border: 1px solid var(--tile-border);
   padding: 8px 12px;
+  color: var(--text);
   border-radius: 8px;
   font-size: 14px;
   cursor:pointer;
   box-shadow: var(--shadow);
-  transition: transform .08s ease, box-shadow .12s ease, background .12s ease;
 }
-.btn:active{ transform: translateY(1px) scale(.997); }
-.btn:hover{ box-shadow: 0 8px 26px rgba(32,32,32,0.08); }
+.btn:hover{ box-shadow: 0 8px 22px rgba(0,0,0,0.08); }
+.btn:active{ transform: translateY(1px) scale(.99); }
 
 /* Main board shell */
 #boardShell{
@@ -71,16 +109,14 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 6px;
-  border-radius: 12px;
 }
 
-/* The game container is square and responsive */
+/* Game container */
 #gameContainer{
   width:100%;
   max-width:560px;
   aspect-ratio: 1/1;
-  background: linear-gradient(180deg, var(--panel), #fcfcfc);
+  background: var(--panel);
   border-radius: 12px;
   display:grid;
   place-items:center;
@@ -88,9 +124,9 @@ html,body{
   padding: 18px;
 }
 
-/* 5x5 letter grid */
+/* Letter grid */
 #letterContainer{
-  width: min(420px, 78vw);
+  width: min(420px, 80vw);
   aspect-ratio: 1/1;
   display:grid;
   grid-template-columns: repeat(5, 1fr);
@@ -100,145 +136,140 @@ html,body{
 
 /* Tiles */
 .block {
-  border-radius: 50%; /* <--- makes them circles */
-  background: white;
-  border: 1px solid var(--tile-border);
+  width: 100%;
+  aspect-ratio: 1/1;           /* always true circle */
+  border-radius: 50%;
+  background: var(--tile-bg);
+  border: 2px solid var(--tile-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  font-size: clamp(20px, 4.5vw, 40px);
   color: var(--text);
   user-select: none;
   cursor: default;
-  transition: transform 150ms ease, box-shadow 150ms ease, background-color 180ms ease, opacity 160ms ease;
-  font-size: clamp(20px, 4.5vw, 40px);
-  box-shadow: 0 2px 6px rgba(22,22,22,0.04);
+  box-shadow: var(--shadow);
+  transition: transform 150ms ease;
 }
 
-/* locked (outer) tiles */
+/* locked outer tiles */
 .Locked{
   background: var(--locked-tile);
-  color: #333;
   cursor: default;
 }
 
-/* tiles that can move (middle 3x3) */
+/* movable inner tiles */
 .Move {
-  background: #fff;
   cursor: pointer;
 }
 .Move:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 0 3px rgba(58,134,255,0.2);
 }
 
-/* selected tile visual */
+/* selected tile glow */
 .Selected{
-  transform: scale(1.06);
-  box-shadow: 0 10px 26px rgba(58,134,255,0.14);
-  outline: 2px solid rgba(58,134,255,0.12);
+  transform: scale(1.07);
+  box-shadow: 0 10px 28px rgba(58,134,255,0.20);
+  outline: 2px solid rgba(58,134,255,0.25);
   z-index: 40;
 }
 
-/* hint tile style (will get inline background color set via JS) */
+/* hint tile */
 .Hint{
-  color: #122;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.05);
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
-/* ---- Win tile coloring helpers ---- */
+/* ---- Win tile coloring ---- */
 .win-colored {
-  transition: background-color 420ms ease, box-shadow 420ms ease, border-color 420ms ease;
-  color: #111; /* text color for good contrast on translucent fills */
+  transition: background-color 420ms ease,
+              box-shadow 420ms ease,
+              border-color 420ms ease;
 }
 
-/* when a tile needs a visible top-layer ring to simulate 'over' */
+/* inner content wrapper for tile ring effect */
 .win-inner {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  z-index: 2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* top ring that serves as the "topmost" weave indicator */
+/* ring that shows the top weave layer */
 .win-ring {
   position: absolute;
-  inset: 6%;             /* ring thickness */
+  inset: 6%;
   border-radius: 50%;
   z-index: 3;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  transition: background-color 420ms ease, opacity 420ms ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* when inner content should be light (for darker fills) */
+/* light text override */
 .win-text-light {
-  color: white !important;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.12);
+  color: var(--text-light) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 
-/* a faint mix for blended overlaps (fallback if any) */
+/* blended background fallback */
 .win-blend {
   background-blend-mode: multiply;
 }
 
-/* small swap animation class (brief pulse) */
+/* subtle pulse for swaps */
 .swapping{
   transform: scale(1.06);
-  transition: transform 140ms ease;
 }
 
-/* Footer / status */
+/* Footer */
 #footer{
   width: min(880px, 94vw);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
   color:var(--muted);
   font-size:14px;
 }
 
 #status{
-  padding: 8px 12px;
-  background: transparent;
+  padding: 6px 10px;
   border-radius: 8px;
 }
 
-/* small screens adjustments */
+/* Mobile adjustments */
 @media (max-width:420px){
   #letterContainer{ gap:6px; }
-  .block{ border-radius: 12%; }
   .btn{ padding: 6px 10px; font-size:13px; }
+  /* circles remain circles due to aspect-ratio, so no override needed */
 }
 
 /* ---- Modal ---- */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(2px);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 .modal.hidden {
   opacity: 0;
   pointer-events: none;
 }
 .modal-content {
-  background: #fff;
+  background: var(--panel);
+  color: var(--text);
   border-radius: 12px;
-  padding: 20px 24px;
-  width: min(400px, 85vw);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  padding: 22px 26px;
+  width: min(420px, 88vw);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
   animation: popIn 0.25s ease;
 }
 .modal-header {
@@ -249,30 +280,23 @@ html,body{
 }
 .modal-header h2 {
   margin: 0;
-  font-size: 20px;
 }
 .modal-body {
-  color: #333;
   font-size: 15px;
-  line-height: 1.5;
-}
-.modal-body ul {
-  margin: 0.5em 0 1em 1.5em;
-  padding: 0;
+  line-height: 1.6;
 }
 .closeBtn {
   border: none;
   background: none;
   font-size: 22px;
   cursor: pointer;
-  color: #666;
-  transition: color 0.15s ease;
+  color: var(--text);
 }
 .closeBtn:hover {
-  color: #000;
+  opacity: 0.6;
 }
 
 @keyframes popIn {
-  from { transform: scale(0.95); opacity: 0; }
+  from { transform: scale(0.94); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }

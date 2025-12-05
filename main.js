@@ -1,13 +1,4 @@
-/* main.js - revised for improved UI/UX
-   preserves your logic but adds new UI interactions:
-   - Selected glow
-   - Swap pulse animation
-   - New Game and status text updates
-   - Colored hints for each solution word
-*/
-
 const wordList = [
-  /* (same wordList as before) */
   'ABOUT','ALERT','ARGUE','BEACH','ABOVE','ALIKE','ARISE','BEGAN','ABUSE','ALIVE','ARRAY','BEGIN','ACTOR','ALLOW','ASIDE','BEGUN','ACUTE','ALONE','ASSET','BEING','ADMIT','ALONG','AUDIO','BELOW','ADOPT','ALTER','AUDIT','BENCH','ADULT','AMONG','AVOID','AFTER','ANGER','AWARD','BIRTH','AGAIN','ANGLE','AWARE','BLACK','AGENT','ANGRY','BADLY','BLAME','AGREE','APART','BAKER','BLIND','AHEAD','APPLE','BASES','BLOCK','ALARM','APPLY','BASIC','BLOOD','ALBUM','ARENA','BASIS','BOARD','BOOST','BUYER','CHINA','COVER','BOOTH','CABLE','CHOSE','CRAFT','BOUND','CALIF','CIVIL','CRASH','BRAIN','CARRY','CLAIM','CREAM','BRAND','CATCH','CLASS','CRIME','BREAD','CAUSE','CLEAN','CROSS','BREAK','CHAIN','CLEAR','CROWD','BREED','CHAIR','CLICK','CROWN','BRIEF','CHART','CLOCK','CURVE','BRING','CHASE','CLOSE','CYCLE','BROAD','CHEAP','COACH','DAILY','BROKE','CHECK','COAST','DANCE','BROWN','CHEST','COULD','DATED','BUILD','CHIEF','COUNT','DEALT','BUILT','CHILD','COURT','DEATH','DEBUT','ENTRY','FORTH','GROUP','DELAY','EQUAL','FORTY','GROWN','DEPTH','ERROR','FORUM','GUARD','DOING','EVENT','FOUND','GUESS','DOUBT','EVERY','FRAME','GUEST','DOZEN','EXACT','FRANK','GUIDE','DRAFT','EXIST','FRAUD','HAPPY','DRAMA','EXTRA','FRESH','HARRY','DRAWN','FAITH','FRONT','HEART','DREAM','FALSE','FRUIT','HEAVY','DRESS','FAULT','FULLY','HENCE','DRILL','FIBRE','FUNNY','NIGHT','DRINK','FIELD','GIANT','HORSE','DRIVE','FIFTH','GIVEN','HOTEL','DROVE','FIFTY','GLASS','HOUSE','DYING','FIGHT','GLOBE','HUMAN','EAGER','FINAL','GOING','IDEAL','EARLY','FIRST','GRACE','IMAGE','EARTH','FIXED','GRADE','INDEX','EIGHT','FLASH','GRAND','INNER','ELITE','FLEET','GRANT','INPUT','EMPTY','FLOOR','GRASS','ISSUE','ENEMY','FLUID','GREAT','IRONY','ENJOY','FOCUS','GREEN','JUICE','ENTER','FORCE','GROSS','JOINT','JUDGE','METAL','MEDIA','NEWLY','KNOWN','LOCAL','MIGHT','NOISE','LABEL','LOGIC','MINOR','NORTH','LARGE','LOOSE','MINUS','NOTED','LASER','LOWER','MIXED','NOVEL','LATER','LUCKY','MODEL','NURSE','LAUGH','LUNCH','MONEY','OCCUR','LAYER','LYING','MONTH','OCEAN','LEARN','MAGIC','MORAL','OFFER','LEASE','MAJOR','MOTOR','OFTEN','LEAST','MAKER','MOUNT','ORDER','LEAVE','MARCH','MOUSE','OTHER','LEGAL','MUSIC','MOUTH','OUGHT','LEVEL','MATCH','MOVIE','PAINT','LIGHT','MAYOR','NEEDS','PAPER','LIMIT','MEANT','NEVER','PARTY','PEACE','POWER','RADIO','ROUND','PANEL','PRESS','RAISE','ROUTE','PHASE','PRICE','RANGE','ROYAL','PHONE','PRIDE','RAPID','RURAL','PHOTO','PRIME','RATIO','SCALE','PIECE','PRINT','REACH','SCENE','PILOT','PRIOR','READY','SCOPE','PITCH','PRIZE','REFER','SCORE','PLACE','PROOF','RIGHT','SENSE','PLAIN','PROUD','RIVAL','SERVE','PLANE','PROVE','RIVER','SEVEN','PLANT','QUEEN','QUICK','SHALL','PLATE','SIXTH','STAND','SHAPE','POINT','QUIET','ROMAN','SHARE','POUND','QUITE','ROUGH','SHARP','SHEET','SPARE','STYLE','TIMES','SHELF','SPEAK','SUGAR','TIRED','SHELL','SPEED','SUITE','TITLE','SHIFT','SPEND','SUPER','TODAY','SHIRT','SPENT','SWEET','TOPIC','SHOCK','SPLIT','TABLE','TOTAL','SHOOT','SPOKE','TAKEN','TOUCH','SHORT','SPORT','TASTE','TOUGH','SHOWN','STAFF','TAXES','TOWER','SIGHT','STAGE','TEACH','TRACK','SINCE','STAKE','TEETH','TRADE','SIXTY','START','TEXAS','TREAT','SIZED','STATE','THANK','TREND','SKILL','STEAM','THEFT','TRIAL','SLEEP','STEEL','THEIR','TRIED','SLIDE','STICK','THEME','TRIES','SMALL','STILL','THERE','TRUCK','SMART','STOCK','THESE','TRULY','SMILE','STONE','THICK','TRUST','SMITH','STOOD','THING','TRUTH','SMOKE','STORE','THINK','TWICE','SOLID','STORM','THIRD','UNDER','SOLVE','STORY','THOSE','UNDUE','SORRY','STRIP','THREE','UNION','SOUND','STUCK','THREW','UNITY','SOUTH','STUDY','THROW','UNTIL','SPACE','STUFF','TIGHT','UPPER','UPSET','WHOLE','WASTE','WOUND','URBAN','WHOSE','WATCH','WRITE','USAGE','WOMAN','WATER','WRONG','USUAL','TRAIN','WHEEL','WROTE','VALID','WORLD','WHERE','YIELD','VALUE','WORRY','WHICH','YOUNG','VIDEO','WORSE','WHILE','YOUTH','VIRUS','WORST','WHITE','WORTH','VISIT','WOULD','VITAL','VOICE'
 ];
 
@@ -18,16 +9,38 @@ let sectPoints = [];
 let gameBoard = Array.from({length:5},()=>Array.from({length:5},()=>''));
 let selected = [];
 let hint1 = 0;
+let generator = pseudoRandom(getDailySeed());
+let timerInterval = null;
+let startTime = null;
+let puzzleLocked = true;
+let darkMode = false;
 
-// colors for the 4 words (order maps to sectPoints indices)
-const wordColors = [
-  getComputedStyle(document.documentElement).getPropertyValue('--color-word-0') || '#e76f51',
-  getComputedStyle(document.documentElement).getPropertyValue('--color-word-1') || '#3a86ff',
-  getComputedStyle(document.documentElement).getPropertyValue('--color-word-2') || '#ffbe0b',
-  getComputedStyle(document.documentElement).getPropertyValue('--color-word-3') || '#83c5be'
-].map(s => s.trim());
+// let wordColors = [
+//   getComputedStyle(document.documentElement).getPropertyValue('--accent-red'),
+//   getComputedStyle(document.documentElement).getPropertyValue('--accent-blue'),
+//   getComputedStyle(document.documentElement).getPropertyValue('--accent-yellow'),
+//   getComputedStyle(document.documentElement).getPropertyValue('--accent-green')
+// ].map(s => s.trim());
 
-function start(){
+let wordColors = [
+  '#3a86ff', //Blue
+  '#83c5be', //Green
+  '#e76f51', //Red
+  '#ffbe0b' //Yellow
+];
+
+function startDailyPuzzle() {
+  generator = pseudoRandom(getDailySeed());
+  start(generator); // your current generator already accepts a seed
+}
+
+function onStartPressed() {
+  beginTimer();
+  puzzleLocked = false;
+}
+
+
+function start(seed){
   // reset variables
   words = [];
   sectPoints = [];
@@ -36,15 +49,15 @@ function start(){
   hint1 = 0;
   clearAllHints();
   clearWinColoring();
-  genPoints();
+  genPoints(seed);
 
-  genWords();
+  genWords(seed);
   while(!unique(words)){
     words=[];
-    genWords();
+    genWords(seed);
   }
-  fillBoard();
-  scrambleBoard();
+  fillBoard(seed);
+  scrambleBoard(seed);
   updatePage();
   setStatus('Swap letters in the middle 3×3 to form four 5-letter words.');
 }
@@ -57,31 +70,31 @@ function newGame(){
    Puzzle generation (unchanged logic aside from small cleanups)
    ------------------- */
 
-function genPoints(){
+function genPoints(seed){
   // build a cross-of-4 points pattern similar to your original
-  sectPoints.push([rand(1,2), rand(1,2)]);
-  sectPoints.push([sectPoints[0][0], rand(sectPoints[0][1]+1,3)]);
-  sectPoints.push([rand(sectPoints[1][0]+1,3), sectPoints[1][1]]);
+  sectPoints.push([rand(1,2,seed), rand(1,2,seed)]);
+  sectPoints.push([sectPoints[0][0], rand(sectPoints[0][1]+1,3,seed)]);
+  sectPoints.push([rand(sectPoints[1][0]+1,3,seed), sectPoints[1][1]]);
   sectPoints.push([sectPoints[2][0], sectPoints[0][1]]);
 }
 
-function genWords(){
+function genWords(seed){
   count = 0;
   while(1==1){
-    words.push(wordList[Math.floor(Math.random()*wordList.length)]);
+    words.push(wordList[rand(0,wordList.length,seed)]);
     let wList2 = getWordList(words[0][sectPoints[1][1]],sectPoints[1][0]);
     let wList3 = [];
     let wList4 = [];
     let word2 = '';
     let word3 = '';
     for(var i in wList2){
-      word2 = wList2[Math.floor(Math.random()*wList2.length)];
+      word2 = wList2[rand(0,wList2.length,seed)];
       wList3 = getWordList(word2[sectPoints[2][0]],sectPoints[2][1]);
       for(var j in wList3){
-        word3 = wList3[Math.floor(Math.random()*wList3.length)];
+        word3 = wList3[rand(0,wList3.length,seed)];
         wList4 = getWordList([words[0][sectPoints[0][1]],word3[sectPoints[3][1]]], [sectPoints[0][0], sectPoints[3][0]])
         if(wList4.length >= 1){
-          words.push(word2, word3, wList4[Math.floor(Math.random()*wList4.length)]);
+          words.push(word2, word3, wList4[rand(0,wList4.length,seed)]);
           // console.log(count);
           return;
         }
@@ -126,7 +139,7 @@ function getWordList(letter, pos){
    Board setup
    ------------------- */
 
-function fillBoard(){
+function fillBoard(seed){
   // place two rows and two columns according to sectPoints and the words
   for(let i=0;i<words.length;i++){
     if(i%2 == 0){
@@ -144,25 +157,25 @@ function fillBoard(){
 
   // fill outer blanks with random letters
   for(let i=1;i<4;i++){
-    if(!gameBoard[0][i]) gameBoard[0][i] = randomLetter();
-    if(!gameBoard[4][i]) gameBoard[4][i] = randomLetter();
-    if(!gameBoard[i][0]) gameBoard[i][0] = randomLetter();
-    if(!gameBoard[i][4]) gameBoard[i][4] = randomLetter();
+    if(!gameBoard[0][i]) gameBoard[0][i] = randomLetter(seed);
+    if(!gameBoard[4][i]) gameBoard[4][i] = randomLetter(seed);
+    if(!gameBoard[i][0]) gameBoard[i][0] = randomLetter(seed);
+    if(!gameBoard[i][4]) gameBoard[i][4] = randomLetter(seed);
   }
 }
 
-function randomLetter(){
-  return alph[Math.floor(Math.random()*alph.length)];
+function randomLetter(seed){
+  return alph[rand(0,alph.length,seed)];
 }
 
-function scrambleBoard(){
+function scrambleBoard(seed){
   let array = [];
   for(let i=1;i<4;i++){
     for(let j=1;j<4;j++){
       array.push(gameBoard[i][j]);
     }
   }
-  shuffle(array);
+  shuffle(array, seed);
   for(let i=1;i<4;i++){
     for(let j=1;j<4;j++){
       gameBoard[i][j] = array.pop();
@@ -208,11 +221,47 @@ function toggleHelp(){
   modal.classList.toggle('hidden');
 }
 
+function updateTimerDisplay(ms) {
+ const sec = Math.floor(ms / 1000);
+ const min = Math.floor(sec / 60);
+ const s = sec % 60;
+ const formatted = `${min}:${s.toString().padStart(2, '0')}`;
+
+ const t = document.getElementById("timerText");
+ if (t) t.textContent = formatted;
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark-mode");
+  if(darkMode){
+    wordColors = [
+      '#3a86ff', //Blue
+      '#83c5be', //Green
+      '#e76f51', //Red
+      '#ffbe0b' //Yellow
+    ];
+    darkMode = false;
+  }
+  else{
+    wordColors = [
+      '#66FFFF', //Blue
+      '#B266FF', //Green
+      '#FF9933', //Red
+      '#FF66FF' //Yellow
+    ];
+    darkMode = true;
+  }
+  if(hint1){
+    hint();
+  }
+}
+
 /* -------------------
    Interaction: click-to-swap
    ------------------- */
 
 function bClick(row, col){
+  if (puzzleLocked) return;
   // ignore clicks outside the middle 3x3
   if(row < 1 || row > 3 || col < 1 || col > 3) return;
 
@@ -264,7 +313,7 @@ function bClick(row, col){
     // reset selected and check win
     selected = [];
     checkWin();
-    setStatus('Swapped tiles.');
+    //setStatus('Swapped tiles.');
   }
 }
 
@@ -272,17 +321,69 @@ function bClick(row, col){
    Utility
    ------------------- */
 
-function shuffle(array) {
+function beginTimer() {
+ startTime = Date.now();
+ updateTimerDisplay(0);
+
+ timerInterval = setInterval(() => {
+   const elapsed = Date.now() - startTime;
+   updateTimerDisplay(elapsed);
+ }, 100); // updates every 0.1s
+}
+
+function stopTimer() {
+ if (timerInterval) {
+   clearInterval(timerInterval);
+   timerInterval = null;
+ }
+}
+
+function shuffle(array, seed) {
   let currentIndex = array.length;
   while (currentIndex !== 0) {
-    let randomIndex = Math.floor(Math.random() * currentIndex);
+    let randomIndex = rand(0,currentIndex,seed);
     currentIndex--;
     [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
   }
 }
 
-function rand(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+function rand(min, max, seed) {
+  max = max-1;
+  if(seed === undefined){
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+  else{
+    return Math.floor(seed() * (max - min + 1) + min);
+  }
+}
+
 function unique(myArray) { return myArray.length === new Set(myArray).size; }
+
+function pseudoRandom(seed) {
+  let value = seed;
+
+  return function() {
+    value = value * 16807 % 2147483647;
+    return value/2147483647;
+  }
+}
+
+function getDailySeed() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, '0');
+  const d = String(today.getDate()).padStart(2, '0');
+  const dateString = `${y}-${m}-${d}`;
+
+  // simple deterministic hash
+  let hash = 0;
+  for (let i = 0; i < dateString.length; i++) {
+    hash = (hash << 5) - hash + dateString.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 
 /* -------------------
    Hint / Highlight / Win detection
@@ -304,6 +405,7 @@ function clearAllHints(){
 
 function highlight(){
   clearAllHints();
+
   if(!sectPoints || sectPoints.length < 4) return;
 
   // For each sectPoint (word) apply its color to that tile
@@ -387,11 +489,12 @@ function checkWin(){
 
 // color constants
 const WIN_COLORS = {
-  top: '#3a86ff',    // blue
-  bottom: '#e76f51', // red
-  left: '#ffbe0b',   // yellow
-  right: '#83c5be'   // green
+  top: getComputedStyle(document.body).getPropertyValue("--accent-blue").trim(),
+  bottom: getComputedStyle(document.body).getPropertyValue("--accent-red").trim(),
+  left: getComputedStyle(document.body).getPropertyValue("--accent-yellow").trim(),
+  right: getComputedStyle(document.body).getPropertyValue("--accent-green").trim()
 };
+
 
 // clear any win coloring (call from start/newGame)
 function clearWinColoring(){
@@ -476,24 +579,26 @@ function isColorDark(hex){
 }
 
 function win(){
+  stopTimer();
   setStatus('🎉 Nice! You solved it!');
 
   // clear previous win styles
   clearWinColoring();
+  clearAllHints()
 
   // mapping: row/col indices that represent the four words (same as checkWin earlier)
-  const topRow = 1;    // top horizontal word (row index 1)
-  const bottomRow = 3; // bottom horizontal word (row index 3)
-  const leftCol = 1;   // left vertical (col index 1)
-  const rightCol = 3;  // right vertical (col index 3)
+  topRow = sectPoints[0][0];    // top horizontal word (row index 1)
+  bottomRow = sectPoints[1][1]; // bottom horizontal word (row index 3)
+  leftCol = sectPoints[2][0];   // left vertical (col index 1)
+  rightCol = sectPoints[3][1];  // right vertical (col index 3)
 
   // Build sets for quick lookup
   const rows = {};
-  rows[topRow] = WIN_COLORS.top;
-  rows[bottomRow] = WIN_COLORS.bottom;
+  rows[topRow] = wordColors[0];
+  rows[bottomRow] = wordColors[2];
   const cols = {};
-  cols[leftCol] = WIN_COLORS.left;
-  cols[rightCol] = WIN_COLORS.right;
+  cols[leftCol] = wordColors[1];
+  cols[rightCol] = wordColors[3];
 
   // For each cell, compute which (if any) of the four colors apply
   for(let r=0;r<5;r++){
