@@ -403,24 +403,57 @@ function clearAllHints(){
   hint1 = 0;
 }
 
+/* function highlight_old(){
+//   clearAllHints();
+//
+//   if(!sectPoints || sectPoints.length < 4) return;
+//
+//   // For each sectPoint (word) apply its color to that tile
+//   for(let i=0;i<sectPoints.length;i++){
+//     const p = sectPoints[i];
+//     const el = document.getElementById('block'+p[0]+p[1]);
+//     if(!el) continue;
+//     el.classList.add('Hint');
+//     // tint background using rgba to be light but visible
+//     let hex = wordColors[i] || '#ccc';
+//     el.style.background = hexToRgba(hex, 0.16);
+//     el.style.borderColor = hexToRgba(hex, 0.35);
+//   }
+//   hint1 = 1;
+//   setStatus('Hints shown (colored points).');
+}*/
+
 function highlight(){
   clearAllHints();
+  let el_s = [];
+  let el_e = [];
 
   if(!sectPoints || sectPoints.length < 4) return;
-
-  // For each sectPoint (word) apply its color to that tile
-  for(let i=0;i<sectPoints.length;i++){
+  for (var i = 0; i < sectPoints.length; i++) {
     const p = sectPoints[i];
-    const el = document.getElementById('block'+p[0]+p[1]);
-    if(!el) continue;
-    el.classList.add('Hint');
+
+    if (i%2 == 0) {
+      el_s = document.getElementById('block'+p[0]+'0');
+      el_e = document.getElementById('block'+p[0]+'4');
+    }
+    else{
+      el_s = document.getElementById('block'+'0'+p[0]);
+      el_e = document.getElementById('block'+'4'+p[0]);
+    }
+
+    el_s.classList.add('Hint');
+    el_e.classList.add('Hint');
+
     // tint background using rgba to be light but visible
     let hex = wordColors[i] || '#ccc';
-    el.style.background = hexToRgba(hex, 0.16);
-    el.style.borderColor = hexToRgba(hex, 0.35);
+    el_s.style.background = hexToRgba(hex, 0.16);
+    el_s.style.borderColor = hexToRgba(hex, 0.35);
+
+    el_e.style.background = hexToRgba(hex, 0.16);
+    el_e.style.borderColor = hexToRgba(hex, 0.35);
   }
   hint1 = 1;
-  setStatus('Hints shown (colored points).');
+  setStatus('Hints shown (Start and End letters).');
 }
 
 // convert hex color to rgba with alpha
