@@ -306,8 +306,6 @@ function bClick(row, col){
     setTimeout(()=> {
       elPrev.classList.remove('swapping');
       elCurr.classList.remove('swapping');
-      // if hints were on, keep hints visible
-      if(hint1) highlight();
     }, 140);
 
     // reset selected and check win
